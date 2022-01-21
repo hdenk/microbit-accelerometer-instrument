@@ -1,5 +1,5 @@
 input.onButtonPressed(Button.A, function () {
-    if (instrument < INSTRUMENT_MAX) {
+    if (instrument > INSTRUMENT_MIN) {
         instrument = instrument - 1
     }
     midi.channel(13).setInstrument(instrument)
@@ -10,7 +10,7 @@ input.onButtonPressed(Button.A, function () {
         . . . . .
         . . . . .
         `)
-    basic.pause(200)
+    basic.pause(100)
     basic.clearScreen()
 })
 input.onGesture(Gesture.LogoUp, function () {
@@ -42,7 +42,7 @@ input.onButtonPressed(Button.AB, function () {
     basic.showString("" + (instrument))
 })
 input.onButtonPressed(Button.B, function () {
-    if (instrument > INSTRUMENT_MIN) {
+    if (instrument < INSTRUMENT_MAX) {
         instrument = instrument + 1
     }
     midi.channel(13).setInstrument(instrument)
@@ -53,7 +53,7 @@ input.onButtonPressed(Button.B, function () {
         . . # . .
         . . . . .
         `)
-    basic.pause(200)
+    basic.pause(100)
     basic.clearScreen()
 })
 input.onGesture(Gesture.Shake, function () {
@@ -94,7 +94,6 @@ let midiChannelNr = 0
 let instrument = 0
 let INSTRUMENT_MAX = 0
 let INSTRUMENT_MIN = 0
-midi.useRawSerial()
 basic.showIcon(IconNames.EigthNote)
 INSTRUMENT_MIN = 1
 INSTRUMENT_MAX = 255

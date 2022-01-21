@@ -1,5 +1,17 @@
 def on_button_pressed_a():
-    drum.note(69, music.beat(BeatFraction.WHOLE))
+    global instrument
+    if instrument < INSTRUMENT_MAX:
+        instrument = instrument - 1
+    midi.channel(13).set_instrument(instrument)
+    basic.show_leds("""
+        . . . . .
+                . . . . .
+                . # # # .
+                . . . . .
+                . . . . .
+    """)
+    basic.pause(200)
+    basic.clear_screen()
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def on_gesture_logo_up():
@@ -10,9 +22,9 @@ def on_gesture_logo_up():
                 . . # . .
                 . . # . .
     """)
-    midi.play_tone(330, music.beat(BeatFraction.WHOLE))
-    midi.play_tone(392, music.beat(BeatFraction.WHOLE))
-    midi.play_tone(392, music.beat(BeatFraction.DOUBLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(330), music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(392), music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(392), music.beat(BeatFraction.DOUBLE))
 input.on_gesture(Gesture.LOGO_UP, on_gesture_logo_up)
 
 def on_gesture_tilt_left():
@@ -23,15 +35,42 @@ def on_gesture_tilt_left():
                 . # . . .
                 . . # . .
     """)
-    midi.play_tone(330, music.beat(BeatFraction.WHOLE))
-    midi.play_tone(294, music.beat(BeatFraction.WHOLE))
-    midi.play_tone(262, music.beat(BeatFraction.WHOLE))
-    midi.play_tone(294, music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(330), music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(294), music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(262), music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(294), music.beat(BeatFraction.WHOLE))
 input.on_gesture(Gesture.TILT_LEFT, on_gesture_tilt_left)
 
+def on_button_pressed_ab():
+    basic.show_string("" + str((instrument)))
+input.on_button_pressed(Button.AB, on_button_pressed_ab)
+
 def on_button_pressed_b():
-    midi.channel(14).note(41, music.beat(BeatFraction.WHOLE))
+    global instrument
+    if instrument > INSTRUMENT_MIN:
+        instrument = instrument + 1
+    midi.channel(13).set_instrument(instrument)
+    basic.show_leds("""
+        . . . . .
+                . . # . .
+                . # # # .
+                . . # . .
+                . . . . .
+    """)
+    basic.pause(200)
+    basic.clear_screen()
 input.on_button_pressed(Button.B, on_button_pressed_b)
+
+def on_gesture_shake():
+    basic.show_leds("""
+        . . # . .
+                . # # # .
+                . # . # .
+                . # # # .
+                . . . . .
+    """)
+    midi.play_drum(DrumSound.ACOUSTIC_BASS_DRUM)
+input.on_gesture(Gesture.SHAKE, on_gesture_shake)
 
 def on_gesture_tilt_right():
     basic.show_leds("""
@@ -41,9 +80,9 @@ def on_gesture_tilt_right():
                 . . . # .
                 . . # . .
     """)
-    midi.play_tone(330, music.beat(BeatFraction.WHOLE))
-    midi.play_tone(330, music.beat(BeatFraction.WHOLE))
-    midi.play_tone(330, music.beat(BeatFraction.DOUBLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(330), music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(330), music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(330), music.beat(BeatFraction.DOUBLE))
 input.on_gesture(Gesture.TILT_RIGHT, on_gesture_tilt_right)
 
 def on_gesture_logo_down():
@@ -54,17 +93,18 @@ def on_gesture_logo_down():
                 . # # # .
                 . . # . .
     """)
-    midi.play_tone(294, music.beat(BeatFraction.WHOLE))
-    midi.play_tone(294, music.beat(BeatFraction.WHOLE))
-    midi.play_tone(294, music.beat(BeatFraction.DOUBLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(294), music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(294), music.beat(BeatFraction.WHOLE))
+    midi.channel(midiChannelNr).note(midi.frequency_to_key(294), music.beat(BeatFraction.DOUBLE))
 input.on_gesture(Gesture.LOGO_DOWN, on_gesture_logo_down)
 
-drum: midi.MidiController = None
+midiChannelNr = 0
+instrument = 0
+INSTRUMENT_MAX = 0
+INSTRUMENT_MIN = 0
 midi.use_raw_serial()
 basic.show_icon(IconNames.EIGTH_NOTE)
-piano = midi.channel(1)
-piano.set_instrument(MidiInstrument.ACOUSTIC_GRAND_PIANO)
-glockenspiel = midi.channel(2)
-glockenspiel.set_instrument(MidiInstrument.GLOCKENSPIEL)
-drum = midi.channel(3)
-drum.set_instrument(DrumSound.ACOUSTIC_BASS_DRUM)
+INSTRUMENT_MIN = 1
+INSTRUMENT_MAX = 255
+instrument = INSTRUMENT_MIN
+midiChannelNr = 13
