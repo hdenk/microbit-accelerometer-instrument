@@ -1,9 +1,17 @@
 input.onButtonPressed(Button.A, function () {
     if (instrument < INSTRUMENT_MAX) {
-        instrument = instrument + 1
+        instrument = instrument - 1
     }
     midi.channel(13).setInstrument(instrument)
-    basic.showString("" + (instrument))
+    basic.showLeds(`
+        . . . . .
+        . . . . .
+        . # # # .
+        . . . . .
+        . . . . .
+        `)
+    basic.pause(200)
+    basic.clearScreen()
 })
 input.onGesture(Gesture.LogoUp, function () {
     basic.showLeds(`
@@ -30,12 +38,23 @@ input.onGesture(Gesture.TiltLeft, function () {
     midi.channel(midiChannelNr).note(midi.frequencyToKey(262), music.beat(BeatFraction.Whole))
     midi.channel(midiChannelNr).note(midi.frequencyToKey(294), music.beat(BeatFraction.Whole))
 })
+input.onButtonPressed(Button.AB, function () {
+    basic.showString("" + (instrument))
+})
 input.onButtonPressed(Button.B, function () {
     if (instrument > INSTRUMENT_MIN) {
-        instrument = instrument - 1
+        instrument = instrument + 1
     }
     midi.channel(13).setInstrument(instrument)
-    basic.showString("" + (instrument))
+    basic.showLeds(`
+        . . . . .
+        . . # . .
+        . # # # .
+        . . # . .
+        . . . . .
+        `)
+    basic.pause(200)
+    basic.clearScreen()
 })
 input.onGesture(Gesture.Shake, function () {
     basic.showLeds(`
