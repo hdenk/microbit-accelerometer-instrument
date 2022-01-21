@@ -99,3 +99,8 @@ INSTRUMENT_MIN = 1
 INSTRUMENT_MAX = 255
 instrument = INSTRUMENT_MIN
 midiChannelNr = 13
+radio.setGroup(10)
+midi.setTransport(function (data: Buffer) {
+    led.toggle(3, 4)
+    radio.sendBuffer(data);
+})
